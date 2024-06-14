@@ -1,0 +1,121 @@
+run:
+  timeout: 2m
+
+# All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
+linters-settings:
+  errcheck:
+    # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
+    # Such cases aren't reported by default.
+    # Default: false
+    check-type-assertions: true
+
+  funlen:
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    lines: 100
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
+    statements: 50
+    # Ignore comments when counting lines.
+    # Default false
+    ignore-comments: true
+
+  gocritic:
+    # Settings passed to gocritic.
+    # The settings key is the name of a supported gocritic checker.
+    # The list of supported checkers can be find in https://go-critic.github.io/overview.
+    settings:
+      captLocal:
+        # Whether to restrict checker to params only.
+        # Default: true
+        paramsOnly: false
+      underef:
+        # Whether to skip (*x).method() calls where x is a pointer receiver.
+        # Default: true
+        skipRecvDeref: false
+
+  govet:
+    # Enable all analyzers.
+    # Default: false
+    enable-all: true
+#    # Disable analyzers by name.
+#    # Run `go tool vet help` to see all analyzers.
+#    # Default: []
+#    disable:
+#      - fieldalignment # too strict
+#     # Settings per analyzer.
+#    settings:
+#      shadow:
+#        # Whether to be strict about shadowing; can be noisy.
+#        # Default: false
+#        strict: false
+
+  perfsprint:
+    # Optimizes into strings concatenation.
+    # Default: true
+    strconcat: false
+
+  lll:
+    line-length: 150
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
+    - gosimple # specializes in simplifying a code
+    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - ineffassign # detects when assignments to existing variables are not used
+    - staticcheck # is a go vet on steroids, applying a ton of static analysis checks
+    - typecheck # like the front-end of a Go compiler, parses and type-checks Go code
+    - unused # checks for unused constants, variables, functions and types
+    - asciicheck # checks that your code does not contain non-ASCII identifiers
+    - bodyclose # checks whether HTTP response body is closed successfully
+    - dupl # tool for code clone detection
+    - durationcheck # checks for two durations multiplied together
+    - errname # checks that sentinel errors are prefixed with the Err and error types are suffixed with the Error
+    - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
+    - funlen # tool for detection of long functions
+    - goconst # finds repeated strings that could be replaced by a constant
+    - gocritic # provides diagnostics that check for bugs, performance and style issues
+    - gocyclo # computes and checks the cyclomatic complexity of functions
+    - godot # checks if comments end in a period
+    - goimports # in addition to fixing imports, goimports also formats your code in the same style as gofmt
+    - gosec # inspects source code for security problems
+    - lll # reports long lines
+    - musttag # enforces field tags in (un)marshaled structs
+    - nilerr # finds the code that returns nil even if it checks that the error is not nil
+    - noctx # finds sending http request without context.Context
+    - nolintlint # reports ill-formed or insufficient nolint directives
+    - perfsprint # checks that fmt.Sprintf can be replaced with a faster alternative
+    - revive # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint
+    - testifylint # checks usage of github.com/stretchr/testify
+    - tparallel # detects inappropriate usage of t.Parallel() method in your Go test codes
+    - unconvert # removes unnecessary type conversions
+    - unparam # reports unused function parameters
+    - wastedassign # finds wasted assignment statements
+    - gci # controls golang package import order and makes it always deterministic
+    - prealloc # [premature optimization, but can be used in some cases] finds slice declarations that could potentially be preallocated
+    - tagalign # checks that struct tags are well aligned
+
+issues:
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
+  max-same-issues: 10
+
+  exclude-rules:
+    - source: "(noinspection|TODO)"
+      linters: [ godot ]
+    - source: "//noinspection"
+      linters: [ gocritic ]
+    - path: "_test\\.go"
+      linters:
+        - bodyclose
+        - dupl
+        - funlen
+        - goconst
+        - unparam
+        - gosec
+        - noctx
